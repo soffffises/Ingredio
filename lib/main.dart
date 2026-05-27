@@ -80,12 +80,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _screens = <Widget>[
-    IngredientsScreen(),
-    RecipesListScreen(),
-    FavoritesScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -95,7 +89,26 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          LazyLoadWrapper(
+            index: 0,
+            selectedIndex: _selectedIndex,
+            child: const IngredientsScreen(),
+          ),
+          LazyLoadWrapper(
+            index: 1,
+            selectedIndex: _selectedIndex,
+            child: const RecipesListScreen(),
+          ),
+          LazyLoadWrapper(
+            index: 2,
+            selectedIndex: _selectedIndex,
+            child: const FavoritesScreen(),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -113,6 +126,43 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class LazyLoadWrapper extends StatefulWidget {
+  final int index;
+  final int selectedIndex;
+  final Widget child;
+
+  const LazyLoadWrapper({
+    super.key,
+    required this.index,
+    required this.selectedIndex,
+    required this.child,
+  });
+
+  @override
+  State<LazyLoadWrapper> createState() => _LazyLoadWrapperState();
+}
+
+class _LazyLoadWrapperState extends State<LazyLoadWrapper> {
+  bool _isLoaded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.selectedIndex == widget.index) {
+      _isLoaded = true;
+    }
+
+    if (_isLoaded) {
+      return widget.child;
+    }
+
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
