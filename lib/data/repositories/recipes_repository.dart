@@ -44,9 +44,8 @@ class RecipesRepository implements IRecipesRepository {
           if (!recipeMap[id]!.matchedIngredients.contains(ingredient)) {
             recipeMap[id]!.matchedIngredients.add(ingredient);
           }
-          recipeMap[id]!.matchCount = selectedIngredients
-              .where((ing) => recipeMap[id]!.matchedIngredients.contains(ing))
-              .length;
+          
+          recipeMap[id]!.matchCount = recipeMap[id]!.matchedIngredients.length;
         }
       }
     }
@@ -76,8 +75,14 @@ class RecipesRepository implements IRecipesRepository {
     }
 
     final recipes = recipeMap.values.toList();
-    recipes.sort((a, b) => b.matchCount.compareTo(a.matchCount));
-    return recipes;
+    
+   
+    if (recipes.length <= 1) {
+      return recipes;
+    }
+
+    
+    return recipes..sort((a, b) => b.matchCount.compareTo(a.matchCount));
   }
 
   Future<Map<String, Recipe>> _loadCachedRecipes() async {

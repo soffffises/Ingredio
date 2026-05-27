@@ -244,31 +244,43 @@ class _IngredientsScreenState extends ConsumerState<IngredientsScreen>
     if (ingredients.isEmpty) {
       return const Center(child: Text(Constants.nothingFound));
     }
-    return SingleChildScrollView(
+    
+    //instead of sorting the whole list, we can just move the matched ingredients to the top
+    return GridView.builder(
       padding: const EdgeInsets.all(16.0),
-      child: Wrap(
-        spacing: 8.0,
-        children: ingredients.map((ingredient) {
-          final isSelected = selectedIngredients.contains(ingredient);
-          return isSelectedTab
-              ? Chip(
-                  label: Text(ingredient),
-                  onDeleted: () => _toggleIngredient(ingredient),
-                )
-              : GestureDetector(
-                  onTap: () => _toggleIngredient(ingredient),
-                  child: Chip(
-                    label: Text(
-                      ingredient,
-                      style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black),
-                    ),
-                    backgroundColor:
-                        isSelected ? Colors.blueAccent : Colors.grey[200],
-                  ),
-                );
-        }).toList(),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 160.0, // 
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        childAspectRatio: 2.5, // 
       ),
+      itemCount: ingredients.length,
+      itemBuilder: (context, index) {
+        final ingredient = ingredients[index];
+        final isSelected = selectedIngredients.contains(ingredient);
+        
+        return isSelectedTab
+            ? Chip(
+                label: Text(
+                  ingredient, 
+                  overflow: TextOverflow.ellipsis, // 
+                ),
+                onDeleted: () => _toggleIngredient(ingredient),
+              )
+            : GestureDetector(
+                onTap: () => _toggleIngredient(ingredient),
+                child: Chip(
+                  label: Text(
+                    ingredient,
+                    overflow: TextOverflow.ellipsis, // 
+                    style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black),
+                  ),
+                  backgroundColor:
+                      isSelected ? Colors.blueAccent : Colors.grey[200],
+                ),
+              );
+      },
     );
   }
 }

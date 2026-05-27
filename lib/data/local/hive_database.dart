@@ -106,13 +106,25 @@ class HiveDatabase {
     await recipeBox.put(recipe.id, recipeHive);
   }
 
-  void _evictLeastRecentlyUsed() {
-    final recipes = recipeBox.values.toList();
+ void _evictLeastRecentlyUsed() {
+    final recipes = recipeBox.values;
     if (recipes.isEmpty) return;
-    recipes.sort((a, b) => (a.lastAccessed ?? DateTime(2000))
-        .compareTo(b.lastAccessed ?? DateTime(2000)));
-    final oldest = recipes.first;
-    if (!favoritesBox.containsKey(oldest.id)) {
+
+    // instead of sorting all recipes, we can just find the one with the oldest lastAccessed timestamp
+    RecipeHive? oldest;
+    for (var recipe in recipes) {
+      if (oldest == null) {
+        oldest = recipe;
+      } else {
+        final currentAge = recipe.lastAccessed ?? DateTime(2000);
+        final oldestAge = oldest.lastAccessed ?? DateTime(2000);
+        if (currentAge.isBefore(oldestAge)) {
+          oldest = recipe;
+        }
+      }
+    }
+
+    if (oldest != null && !favoritesBox.containsKey(oldest.id)) {
       recipeBox.delete(oldest.id);
       _inMemoryCache.remove(oldest.id);
     }
