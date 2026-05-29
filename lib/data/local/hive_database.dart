@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
 
 part 'hive_database.g.dart';
 

@@ -2,15 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/presentation/providers/favorites_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredient_quantities_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredients_provider.dart';
-import 'package:pantry_chef/presentation/providers/recipes_provider.dart';
-import 'package:pantry_chef/presentation/providers/user_profile_provider.dart';
-import 'package:pantry_chef/presentation/screens/recipe_detail_screen.dart';
-import 'package:pantry_chef/presentation/screens/register_screen.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/presentation/providers/favorites_provider.dart';
+import 'package:ingredio/presentation/providers/ingredient_quantities_provider.dart';
+import 'package:ingredio/presentation/providers/ingredients_provider.dart';
+import 'package:ingredio/presentation/providers/recipes_provider.dart';
+import 'package:ingredio/presentation/providers/user_profile_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -22,28 +21,28 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final Set<String> _preferences = {'Vegetarian', 'High Protein'};
   final List<_RecipeCollection> _collections = [
-    _RecipeCollection(
+    const _RecipeCollection(
       id: 1,
       title: 'Weekly Favorites',
       count: 0,
       icon: FontAwesomeIcons.solidHeart,
       color: AppColors.secondaryContainer,
     ),
-    _RecipeCollection(
+    const _RecipeCollection(
       id: 2,
       title: 'Pantry Ready',
       count: 0,
       icon: FontAwesomeIcons.boxOpen,
       color: AppColors.primaryContainer,
     ),
-    _RecipeCollection(
+    const _RecipeCollection(
       id: 3,
       title: 'Healthy Picks',
       count: 0,
       icon: FontAwesomeIcons.leaf,
       color: AppColors.primaryContainer,
     ),
-    _RecipeCollection(
+    const _RecipeCollection(
       id: 4,
       title: 'To Try Next',
       count: 0,
@@ -187,8 +186,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _goToRegister() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      AppRoutes.register,
       (_) => false,
     );
   }
@@ -1005,8 +1004,10 @@ class _TopBar extends StatelessWidget {
         IconButton(
           visualDensity: VisualDensity.compact,
           iconSize: 17,
-          onPressed: () {},
-          icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.settings);
+          },
+          icon: const FaIcon(FontAwesomeIcons.gear),
         ),
       ],
     );
@@ -1414,10 +1415,9 @@ class _FavoriteRecipeCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailScreen(recipeId: recipe.id),
-          ),
+        Navigator.of(context).pushNamed(
+          AppRoutes.recipeDetail,
+          arguments: RecipeDetailRouteArgs(recipeId: recipe.id),
         );
       },
       child: Container(

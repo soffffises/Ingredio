@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pantry_chef/core/utils/ingredient_icons.dart';
+import 'package:ingredio/core/utils/ingredient_icons.dart';
 
 void main() {
   test('maps poultry ingredients to poultry icon and category', () {

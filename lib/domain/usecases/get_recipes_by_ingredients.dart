@@ -1,5 +1,5 @@
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/domain/repositories/i_recipes_repository.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/domain/repositories/i_recipes_repository.dart';
 
 class GetRecipesByIngredients {
   final IRecipesRepository repository;

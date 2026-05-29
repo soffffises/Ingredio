@@ -30,8 +30,14 @@ class IngredientIcons {
     if (_containsAny(value, ['milk', 'cheese', 'cream', 'yogurt', 'butter'])) {
       return const IngredientIconData(FontAwesomeIcons.cheese, 'Dairy');
     }
-    if (_containsAny(value,
-        ['black pepper', 'white pepper', 'cumin', 'paprika', 'cinnamon', 'spice'])) {
+    if (_containsAny(value, [
+      'black pepper',
+      'white pepper',
+      'cumin',
+      'paprika',
+      'cinnamon',
+      'spice'
+    ])) {
       return const IngredientIconData(FontAwesomeIcons.mortarPestle, 'Spices');
     }
     if (_containsAny(value,

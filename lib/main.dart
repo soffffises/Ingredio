@@ -3,16 +3,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/di/service_locator.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
-import 'package:pantry_chef/presentation/screens/splash_screen.dart';
-import 'package:pantry_chef/presentation/screens/ingredients_screen.dart';
-import 'package:pantry_chef/presentation/screens/recipes_list_screen.dart';
-import 'package:pantry_chef/presentation/screens/favorites_screen.dart';
-import 'package:pantry_chef/presentation/screens/profile_screen.dart';
-import 'package:pantry_chef/presentation/providers/hive_database_provider.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/di/service_locator.dart';
+import 'package:ingredio/data/local/hive_database.dart';
+import 'package:ingredio/presentation/screens/splash_screen.dart';
+import 'package:ingredio/presentation/screens/ingredients_screen.dart';
+import 'package:ingredio/presentation/screens/recipes_list_screen.dart';
+import 'package:ingredio/presentation/screens/favorites_screen.dart';
+import 'package:ingredio/presentation/screens/profile_screen.dart';
+import 'package:ingredio/presentation/screens/recipe_detail_screen.dart';
+import 'package:ingredio/presentation/screens/recipes_browser_screen.dart';
+import 'package:ingredio/presentation/screens/register_screen.dart';
+import 'package:ingredio/presentation/screens/settings_screen.dart';
+import 'package:ingredio/presentation/providers/hive_database_provider.dart';
+import 'package:ingredio/presentation/providers/theme_mode_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,25 +33,72 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: Constants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const SplashScreen(),
+      darkTheme: AppTheme.dark,
+      themeMode: ref.watch(themeModeProvider),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: _onGenerateRoute,
     );
   }
+}
+
+Route<dynamic> _onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case AppRoutes.splash:
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const SplashScreen(),
+      );
+    case AppRoutes.register:
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const RegisterScreen(),
+      );
+    case AppRoutes.main:
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const MainScreen(),
+      );
+    case AppRoutes.recipes:
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const RecipesBrowserScreen(),
+      );
+    case AppRoutes.settings:
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const SettingsScreen(),
+      );
+    case AppRoutes.recipeDetail:
+      final args = settings.arguments;
+      if (args is RecipeDetailRouteArgs) {
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => RecipeDetailScreen(recipeId: args.recipeId),
+        );
+      }
+      break;
+  }
+
+  return MaterialPageRoute(
+    settings: settings,
+    builder: (_) => const SplashScreen(),
+  );
 }
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -90,6 +143,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBottomNavigationBar() {
+    final colorScheme = Theme.of(context).colorScheme;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _IosBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -101,8 +155,8 @@ class _MainScreenState extends State<MainScreen> {
       height: 80,
       selectedIndex: _selectedIndex,
       onDestinationSelected: _onItemTapped,
-      backgroundColor: AppColors.surface,
-      indicatorColor: AppColors.primaryContainer.withValues(alpha: 0.12),
+      backgroundColor: colorScheme.surface,
+      indicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.18),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: const [
         NavigationDestination(
@@ -165,12 +219,13 @@ class _IosBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
         border: Border(
-          top: BorderSide(color: AppColors.outlineVariant, width: 0.5),
+          top: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
         ),
       ),
       child: Padding(
@@ -208,7 +263,8 @@ class _IosTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.onSurfaceVariant;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = selected ? colorScheme.primary : colorScheme.onSurfaceVariant;
 
     return CupertinoButton(
       padding: EdgeInsets.zero,
@@ -226,7 +282,7 @@ class _IosTabButton extends StatelessWidget {
                 height: 26,
                 decoration: BoxDecoration(
                   color: selected
-                      ? AppColors.primaryContainer.withValues(alpha: 0.12)
+                      ? colorScheme.primaryContainer.withValues(alpha: 0.12)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(999),
                 ),

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/presentation/providers/hive_database_provider.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/presentation/providers/hive_database_provider.dart';
 
 class FavoritesNotifier extends StateNotifier<List<Recipe>> {
   FavoritesNotifier(this.ref)

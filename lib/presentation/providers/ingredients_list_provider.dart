@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/di/service_locator.dart';
-import 'package:pantry_chef/data/api/mealdb_service.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
+import 'package:ingredio/di/service_locator.dart';
+import 'package:ingredio/data/api/mealdb_service.dart';
+import 'package:ingredio/data/local/hive_database.dart';
 
 final ingredientsListProvider = FutureProvider<List<String>>((ref) async {
   final mealDbService = getIt<MealDbService>();

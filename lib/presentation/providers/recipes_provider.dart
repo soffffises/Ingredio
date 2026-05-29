@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/di/service_locator.dart';
-import 'package:pantry_chef/domain/usecases/get_recipes_by_ingredients.dart';
-import 'package:pantry_chef/presentation/providers/ingredients_provider.dart';
+import 'package:ingredio/di/service_locator.dart';
+import 'package:ingredio/domain/usecases/get_recipes_by_ingredients.dart';
+import 'package:ingredio/presentation/providers/ingredients_provider.dart';
 
 final recipesProvider = FutureProvider((ref) async {
   final ingredients = ref.watch(ingredientsProvider);

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/di/service_locator.dart';
-import 'package:pantry_chef/presentation/providers/hive_database_provider.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/data/local/hive_database.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/di/service_locator.dart';
+import 'package:ingredio/presentation/providers/hive_database_provider.dart';
 
 class MockHiveDatabase extends Mock implements HiveDatabase {}
 
