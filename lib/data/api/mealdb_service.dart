@@ -1,5 +1,5 @@
-import 'package:pantry_chef/data/api/api_client.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
+import 'package:ingredio/data/api/api_client.dart';
+import 'package:ingredio/data/local/hive_database.dart';
 
 class MealDbService {
   final ApiClient apiClient;

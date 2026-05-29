@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
+import 'package:ingredio/core/utils/constants.dart';
 
 class ApiClient {
   final Dio _dio;

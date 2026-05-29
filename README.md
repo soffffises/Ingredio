@@ -43,7 +43,7 @@ Ingredio is a Flutter application designed to help users find recipes based on t
 
 ### Prerequisites
 
-- Flutter SDK
+- Flutter 3.41.6
 - Dart SDK
 
 ### Installation
@@ -83,6 +83,10 @@ flutter build apk
   - **data**: Data sources and repositories.
   - **core**: Core utilities and constants.
   - **di**: Dependency injection setup.
+
+This repository intentionally uses a clean architecture layout instead of a flat
+`lib/models`, `lib/services`, `lib/providers` structure. The separation keeps UI,
+state, domain logic, and data access independent and easier to test.
 
 ## Technologies and Libraries
 

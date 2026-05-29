@@ -1,4 +1,4 @@
-package com.rbppl.pantry_chef
+package com.rbppl.ingredio
 
 import io.flutter.embedding.android.FlutterActivity
 

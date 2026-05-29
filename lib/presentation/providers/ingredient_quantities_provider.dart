@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
-import 'package:pantry_chef/di/service_locator.dart';
+import 'package:ingredio/data/local/hive_database.dart';
+import 'package:ingredio/di/service_locator.dart';
 
 final ingredientQuantitiesProvider =
     StateNotifierProvider<IngredientQuantitiesNotifier, Map<String, int>>(

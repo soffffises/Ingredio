@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/presentation/providers/favorites_provider.dart';
-import 'package:pantry_chef/presentation/widgets/recipe_tile.dart';
-import 'package:pantry_chef/presentation/providers/connectivity_provider.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/presentation/providers/favorites_provider.dart';
+import 'package:ingredio/presentation/widgets/recipe_tile.dart';
+import 'package:ingredio/presentation/providers/connectivity_provider.dart';
 
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});

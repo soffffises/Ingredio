@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/domain/repositories/i_recipe_details_repository.dart';
-import 'package:pantry_chef/domain/usecases/get_recipe_details.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/domain/repositories/i_recipe_details_repository.dart';
+import 'package:ingredio/domain/usecases/get_recipe_details.dart';
 
 class _MockRecipeDetailsRepository extends Mock
     implements IRecipeDetailsRepository {}

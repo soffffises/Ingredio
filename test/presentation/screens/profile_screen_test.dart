@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pantry_chef/presentation/providers/recipes_provider.dart';
-import 'package:pantry_chef/presentation/screens/profile_screen.dart';
+import 'package:ingredio/presentation/providers/recipes_provider.dart';
+import 'package:ingredio/presentation/screens/profile_screen.dart';
 
 import 'screen_test_helpers.dart';
 

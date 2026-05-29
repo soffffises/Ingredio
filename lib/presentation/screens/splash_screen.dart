@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/main.dart';
-import 'package:pantry_chef/presentation/providers/user_profile_provider.dart';
-import 'package:pantry_chef/presentation/screens/register_screen.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/presentation/providers/user_profile_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -30,12 +29,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
 
     _controller.forward().whenComplete(() {
+      if (!mounted) return;
       final isRegistered = ref.read(userProfileProvider).isRegistered;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) =>
-              isRegistered ? const MainScreen() : const RegisterScreen(),
-        ),
+      Navigator.of(context).pushReplacementNamed(
+        isRegistered ? AppRoutes.main : AppRoutes.register,
       );
     });
   }

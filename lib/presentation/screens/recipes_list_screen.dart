@@ -4,15 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/presentation/providers/connectivity_provider.dart';
-import 'package:pantry_chef/presentation/providers/favorites_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredients_provider.dart';
-import 'package:pantry_chef/presentation/providers/recipes_provider.dart';
-import 'package:pantry_chef/presentation/providers/user_profile_provider.dart';
-import 'package:pantry_chef/presentation/screens/recipe_detail_screen.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/presentation/providers/connectivity_provider.dart';
+import 'package:ingredio/presentation/providers/favorites_provider.dart';
+import 'package:ingredio/presentation/providers/ingredients_provider.dart';
+import 'package:ingredio/presentation/providers/recipes_provider.dart';
+import 'package:ingredio/presentation/providers/user_profile_provider.dart';
 
 class RecipesListScreen extends ConsumerStatefulWidget {
   const RecipesListScreen({super.key});
@@ -82,6 +82,12 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                   query: _query,
                   selectedFilter: _selectedFilter,
                   filters: _filters,
+                  onViewAll: () => Navigator.of(context).pushNamed(
+                    AppRoutes.recipes,
+                  ),
+                  onMore: () => Navigator.of(context).pushNamed(
+                    AppRoutes.recipes,
+                  ),
                   onQueryChanged: (value) {
                     setState(() => _query = value.toLowerCase().trim());
                   },
@@ -148,6 +154,8 @@ class _DiscoverContent extends StatelessWidget {
   final String query;
   final String selectedFilter;
   final List<String> filters;
+  final VoidCallback onViewAll;
+  final VoidCallback onMore;
   final ValueChanged<String> onQueryChanged;
   final ValueChanged<String> onFilterSelected;
 
@@ -160,6 +168,8 @@ class _DiscoverContent extends StatelessWidget {
     required this.query,
     required this.selectedFilter,
     required this.filters,
+    required this.onViewAll,
+    required this.onMore,
     required this.onQueryChanged,
     required this.onFilterSelected,
   });
@@ -233,6 +243,7 @@ class _DiscoverContent extends StatelessWidget {
                   _SectionHeader(
                     title: 'Recommended for you',
                     actionLabel: 'View all',
+                    onAction: onViewAll,
                   ),
                 ],
               ],
@@ -258,10 +269,11 @@ class _DiscoverContent extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
             sliver: SliverList.list(
-              children: const [
+              children: [
                 _SectionHeader(
                   title: 'Trending now',
                   actionLabel: 'More',
+                  onAction: onMore,
                 ),
               ],
             ),
@@ -625,10 +637,12 @@ class _StatCard extends StatelessWidget {
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String actionLabel;
+  final VoidCallback? onAction;
 
   const _SectionHeader({
     required this.title,
     required this.actionLabel,
+    this.onAction,
   });
 
   @override
@@ -644,20 +658,33 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Text(
-          actionLabel,
-          style: const TextStyle(
-            color: AppColors.onSurfaceVariant,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
+        if (onAction != null)
+          InkWell(
+            borderRadius: BorderRadius.circular(999),
+            onTap: onAction,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    actionLabel,
+                    style: const TextStyle(
+                      color: AppColors.onSurfaceVariant,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const FaIcon(
+                    FontAwesomeIcons.arrowRight,
+                    color: AppColors.onSurfaceVariant,
+                    size: 10,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        const SizedBox(width: 4),
-        const FaIcon(
-          FontAwesomeIcons.arrowRight,
-          color: AppColors.onSurfaceVariant,
-          size: 10,
-        ),
       ],
     );
   }
@@ -951,10 +978,9 @@ class _RecipeTapTarget extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailScreen(recipeId: recipe.id),
-          ),
+        Navigator.of(context).pushNamed(
+          AppRoutes.recipeDetail,
+          arguments: RecipeDetailRouteArgs(recipeId: recipe.id),
         );
       },
       child: child,

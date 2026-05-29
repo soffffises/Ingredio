@@ -1,7 +1,7 @@
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/domain/repositories/i_recipes_repository.dart';
-import 'package:pantry_chef/data/api/mealdb_service.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/domain/repositories/i_recipes_repository.dart';
+import 'package:ingredio/data/api/mealdb_service.dart';
+import 'package:ingredio/data/local/hive_database.dart';
 
 class RecipesRepository implements IRecipesRepository {
   final MealDbService mealDbService;
@@ -44,7 +44,7 @@ class RecipesRepository implements IRecipesRepository {
           if (!recipeMap[id]!.matchedIngredients.contains(ingredient)) {
             recipeMap[id]!.matchedIngredients.add(ingredient);
           }
-          
+
           recipeMap[id]!.matchCount = recipeMap[id]!.matchedIngredients.length;
         }
       }
@@ -75,13 +75,11 @@ class RecipesRepository implements IRecipesRepository {
     }
 
     final recipes = recipeMap.values.toList();
-    
-   
+
     if (recipes.length <= 1) {
       return recipes;
     }
 
-    
     return recipes..sort((a, b) => b.matchCount.compareTo(a.matchCount));
   }
 

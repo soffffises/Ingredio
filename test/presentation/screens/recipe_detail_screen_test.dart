@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pantry_chef/presentation/providers/connectivity_provider.dart';
-import 'package:pantry_chef/presentation/providers/recipe_detail_provider.dart';
-import 'package:pantry_chef/presentation/screens/recipe_detail_screen.dart';
+import 'package:ingredio/presentation/providers/connectivity_provider.dart';
+import 'package:ingredio/presentation/providers/recipe_detail_provider.dart';
+import 'package:ingredio/presentation/screens/recipe_detail_screen.dart';
 
 import 'screen_test_helpers.dart';
 

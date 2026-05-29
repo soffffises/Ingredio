@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/core/utils/ingredient_icons.dart';
-import 'package:pantry_chef/presentation/providers/connectivity_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredient_quantities_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredients_list_provider.dart';
-import 'package:pantry_chef/presentation/providers/ingredients_provider.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/core/utils/ingredient_icons.dart';
+import 'package:ingredio/presentation/providers/connectivity_provider.dart';
+import 'package:ingredio/presentation/providers/ingredient_quantities_provider.dart';
+import 'package:ingredio/presentation/providers/ingredients_list_provider.dart';
+import 'package:ingredio/presentation/providers/ingredients_provider.dart';
 
 class IngredientsScreen extends ConsumerStatefulWidget {
   const IngredientsScreen({super.key});
@@ -623,7 +623,7 @@ class _PantryItemCard extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             quantity.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.onSurface,
               fontSize: 12,
               fontWeight: FontWeight.w800,

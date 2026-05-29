@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_chef/core/utils/app_theme.dart';
-import 'package:pantry_chef/core/utils/constants.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/presentation/providers/favorites_provider.dart';
-import 'package:pantry_chef/presentation/screens/recipe_detail_screen.dart';
+import 'package:ingredio/core/utils/app_theme.dart';
+import 'package:ingredio/core/utils/constants.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/presentation/providers/favorites_provider.dart';
 
 class RecipeTile extends ConsumerWidget {
   final Recipe recipe;
@@ -22,69 +22,9 @@ class RecipeTile extends ConsumerWidget {
         ref.watch(favoritesProvider).any((fav) => fav.id == recipe.id);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                RecipeDetailScreen(recipeId: recipe.id),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              final scaleTween = Tween<double>(begin: 0.9, end: 1.0).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-              );
-              final fadeTween = Tween<double>(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeIn),
-              );
-              final slideTween = Tween<Offset>(
-                begin: const Offset(0.0, 0.2),
-                end: Offset.zero,
-              ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-              );
-              final reverseFadeTween =
-                  Tween<double>(begin: 1.0, end: 0.0).animate(
-                CurvedAnimation(
-                    parent: secondaryAnimation, curve: Curves.easeOut),
-              );
-              final reverseSlideTween = Tween<Offset>(
-                begin: Offset.zero,
-                end: const Offset(0.0, -0.2),
-              ).animate(
-                CurvedAnimation(
-                    parent: secondaryAnimation, curve: Curves.easeInCubic),
-              );
-
-              return SlideTransition(
-                position: secondaryAnimation.value > 0
-                    ? reverseSlideTween
-                    : slideTween,
-                child: FadeTransition(
-                  opacity: secondaryAnimation.value > 0
-                      ? reverseFadeTween
-                      : fadeTween,
-                  child: ScaleTransition(
-                    scale: scaleTween,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryContainer
-                                .withValues(alpha: animation.value * 0.18),
-                            blurRadius: 24 * animation.value,
-                            spreadRadius: -2 * animation.value,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: child,
-                    ),
-                  ),
-                ),
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 600),
-            reverseTransitionDuration: const Duration(milliseconds: 400),
-            opaque: false,
-          ),
+        Navigator.of(context).pushNamed(
+          AppRoutes.recipeDetail,
+          arguments: RecipeDetailRouteArgs(recipeId: recipe.id),
         );
       },
       child: Card(

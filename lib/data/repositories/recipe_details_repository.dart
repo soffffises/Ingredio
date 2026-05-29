@@ -1,7 +1,7 @@
-import 'package:pantry_chef/domain/repositories/i_recipe_details_repository.dart';
-import 'package:pantry_chef/domain/entities/recipe.dart';
-import 'package:pantry_chef/data/api/mealdb_service.dart';
-import 'package:pantry_chef/data/local/hive_database.dart';
+import 'package:ingredio/domain/repositories/i_recipe_details_repository.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
+import 'package:ingredio/data/api/mealdb_service.dart';
+import 'package:ingredio/data/local/hive_database.dart';
 
 class RecipeDetailsRepository implements IRecipeDetailsRepository {
   final MealDbService mealDbService;

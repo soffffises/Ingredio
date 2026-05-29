@@ -1,5 +1,5 @@
 class Constants {
-  static const String appName = "Pantry Chef";
+  static const String appName = "Ingredio";
   static const String mealDbBaseUrl = "https://www.themealdb.com/api/json/v1/1";
 
   static const String favorites = 'Favorites';
@@ -29,7 +29,7 @@ class Constants {
   static const String matches = 'Matches:';
   static const String matched = 'Matched:';
   static const String ingredients = 'Ingredients';
-  static const String recipeFromPantryChef = 'Recipe from PantryChef';
+  static const String recipeFromIngredio = 'Recipe from Ingredio';
   static const String noTitle = 'No title';
   static const String recipeLoading = 'Recipe is still loading';
 
