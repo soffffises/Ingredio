@@ -70,9 +70,12 @@ class HiveDatabase {
   static const String recipeBoxName = 'recipesBox';
   static const String favoritesBoxName = 'favoritesBox';
   static const String ingredientsBoxName = 'ingredientsBox';
+  static const String ingredientQuantitiesBoxName = 'ingredientQuantitiesBox';
   static const String selectedIngredientsKey = 'selectedIngredients';
   static const String cuisinesBoxName = 'cuisinesBox';
   static const String categoriesBoxName = 'categoriesBox';
+  static const String settingsBoxName = 'settingsBox';
+  static const String userNameKey = 'userName';
   static const int maxCacheSize = 100;
   static const int cacheExpirationDays = 7;
 
@@ -84,8 +87,10 @@ class HiveDatabase {
     await Hive.openBox<RecipeHive>(recipeBoxName);
     await Hive.openBox(favoritesBoxName);
     await Hive.openBox<List<String>>(ingredientsBoxName);
+    await Hive.openBox<int>(ingredientQuantitiesBoxName);
     await Hive.openBox<List<String>>(cuisinesBoxName);
     await Hive.openBox<List<String>>(categoriesBoxName);
+    await Hive.openBox<String>(settingsBoxName);
     _scheduleCacheCleanup();
   }
 
@@ -93,9 +98,12 @@ class HiveDatabase {
   Box get favoritesBox => Hive.box(favoritesBoxName);
   Box<List<String>> get ingredientsBox =>
       Hive.box<List<String>>(ingredientsBoxName);
+  Box<int> get ingredientQuantitiesBox =>
+      Hive.box<int>(ingredientQuantitiesBoxName);
   Box<List<String>> get cuisinesBox => Hive.box<List<String>>(cuisinesBoxName);
   Box<List<String>> get categoriesBox =>
       Hive.box<List<String>>(categoriesBoxName);
+  Box<String> get settingsBox => Hive.box<String>(settingsBoxName);
 
   Future<void> cacheRecipe(Recipe recipe) async {
     final recipeHive = RecipeHive.fromRecipe(recipe);
@@ -106,7 +114,7 @@ class HiveDatabase {
     await recipeBox.put(recipe.id, recipeHive);
   }
 
- void _evictLeastRecentlyUsed() {
+  void _evictLeastRecentlyUsed() {
     final recipes = recipeBox.values;
     if (recipes.isEmpty) return;
 
@@ -206,11 +214,52 @@ class HiveDatabase {
     return ingredientsBox.get(selectedIngredientsKey) ?? [];
   }
 
+  Map<String, int> loadIngredientQuantities() {
+    return {
+      for (final key in ingredientQuantitiesBox.keys)
+        key.toString(): ingredientQuantitiesBox.get(key, defaultValue: 1) ?? 1,
+    };
+  }
+
+  Future<void> saveIngredientQuantity(String ingredient, int quantity) async {
+    await ingredientQuantitiesBox.put(ingredient, quantity);
+  }
+
+  Future<void> removeIngredientQuantity(String ingredient) async {
+    await ingredientQuantitiesBox.delete(ingredient);
+  }
+
   Future<void> cacheCategories(List<String> categories) async {
     await categoriesBox.put('categories', categories);
   }
 
   Future<List<String>> getCachedCategories() async {
     return categoriesBox.get('categories') ?? [];
+  }
+
+  String? loadUserName() {
+    final value = settingsBox.get(userNameKey)?.trim();
+    return value == null || value.isEmpty ? null : value;
+  }
+
+  Future<void> saveUserName(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return;
+    await settingsBox.put(userNameKey, trimmedName);
+  }
+
+  Future<void> clearUserName() async {
+    await settingsBox.delete(userNameKey);
+  }
+
+  Future<void> clearAllData() async {
+    _inMemoryCache.clear();
+    await recipeBox.clear();
+    await favoritesBox.clear();
+    await ingredientsBox.clear();
+    await ingredientQuantitiesBox.clear();
+    await cuisinesBox.clear();
+    await categoriesBox.clear();
+    await settingsBox.clear();
   }
 }

@@ -1,5 +1,5 @@
 class Constants {
-  static const String appName = "PantryChef";
+  static const String appName = "Pantry Chef";
   static const String mealDbBaseUrl = "https://www.themealdb.com/api/json/v1/1";
 
   static const String favorites = 'Favorites';

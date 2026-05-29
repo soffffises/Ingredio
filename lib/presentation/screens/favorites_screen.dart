@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pantry_chef/core/utils/app_theme.dart';
 import 'package:pantry_chef/core/utils/constants.dart';
 import 'package:pantry_chef/presentation/providers/favorites_provider.dart';
 import 'package:pantry_chef/presentation/widgets/recipe_tile.dart';
@@ -9,8 +10,8 @@ class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
 
   Future<void> _refreshFavorites(WidgetRef ref) async {
-    ref.refresh(favoritesProvider);
-    ref.refresh(connectivityProvider);
+    ref.invalidate(favoritesProvider);
+    ref.invalidate(connectivityProvider);
   }
 
   @override
@@ -19,22 +20,22 @@ class FavoritesScreen extends ConsumerWidget {
     final connectivityAsync = ref.watch(connectivityProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text(Constants.favorites))),
+      appBar: AppBar(title: const Text(Constants.favorites)),
       body: connectivityAsync.when(
         data: (isConnected) => RefreshIndicator(
           onRefresh: () => _refreshFavorites(ref),
           child: favoriteRecipes.isEmpty
-              ? const Center(child: Text(Constants.favoritesDescription))
+              ? const _EmptyFavoritesState()
               : LayoutBuilder(
                   builder: (context, constraints) {
                     int crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
                     return GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 0.8,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
+                        childAspectRatio: 0.68,
                       ),
                       itemCount: favoriteRecipes.length,
                       itemBuilder: (context, index) {
@@ -59,6 +60,43 @@ class FavoritesScreen extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyFavoritesState extends StatelessWidget {
+  const _EmptyFavoritesState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: const BoxDecoration(
+                color: AppColors.surfaceContainerLow,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.favorite,
+                color: AppColors.secondaryContainer,
+                size: 34,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              Constants.favoritesDescription,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ],
         ),
       ),
     );
