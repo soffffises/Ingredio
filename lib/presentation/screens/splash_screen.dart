@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pantry_chef/core/utils/app_theme.dart';
 import 'package:pantry_chef/core/utils/constants.dart';
 import 'package:pantry_chef/main.dart';
+import 'package:pantry_chef/presentation/providers/user_profile_provider.dart';
+import 'package:pantry_chef/presentation/screens/register_screen.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -26,8 +30,12 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward().whenComplete(() {
+      final isRegistered = ref.read(userProfileProvider).isRegistered;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainScreen()),
+        MaterialPageRoute(
+          builder: (_) =>
+              isRegistered ? const MainScreen() : const RegisterScreen(),
+        ),
       );
     });
   }
@@ -41,26 +49,30 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D47A1),
+      backgroundColor: AppColors.background,
       body: Center(
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: const Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.restaurant_menu,
-                size: 100,
-                color: Colors.white,
-              ),
-              SizedBox(height: 20),
-              Text(
-                Constants.appName,
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
+              Container(
+                width: 112,
+                height: 112,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.restaurant_menu,
+                  size: 56,
                   color: Colors.white,
                 ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                Constants.appName,
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
             ],
           ),

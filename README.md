@@ -1,6 +1,6 @@
-# Pantry Chef
+# Ingredio
 
-Pantry Chef is a Flutter application designed to help users find recipes based on the ingredients they have. The app provides a user-friendly interface to select ingredients, view recipes, and manage favorites.
+Ingredio is a Flutter application designed to help users find recipes based on the ingredients they already have. The app provides a focused pantry workflow, recipe discovery, saved favorites, and a simple profile experience.
 
 ## Features
 
@@ -8,16 +8,36 @@ Pantry Chef is a Flutter application designed to help users find recipes based o
 - **Recipe Search**: The app fetches recipes based on the selected ingredients.
 - **Recipe Details**: Detailed view of each recipe including ingredients, instructions, and category.
 - **Favorites**: Users can mark recipes as favorites for quick access.
+- **Profile and Onboarding**: Users register with a name before using the app and can manage account actions from the profile screen.
 - **Offline Support**: The app caches data for offline access.
 - **Share Recipes**: Users can share recipes with others.
 - **Connectivity Check**: The app checks for internet connectivity and handles offline scenarios gracefully.
 
 ## Screenshots
 
-![Ingredients Screen](assets/images/ingridients_list_screen.jpg)
-![Recipes List Screen](assets/images/recipes_list_screen.jpg)
-![Recipe Detail Screen](assets/images/recipe_detail_screen.jpg)
-![Favorites Screen](assets/images/favorites_list_screen.jpg)
+### Design System
+
+<img src="./assets/images/culinary_intelligence.png" alt="Culinary Intelligence design system" width="720">
+<img src="./assets/images/design_palette.png" alt="Design Palette" width="720">
+
+### App Screens
+
+<table>
+  <tr>
+    <td align="center"><strong>Register</strong></td>
+    <td align="center"><strong>Discover</strong></td>
+    <td align="center"><strong>Pantry</strong></td>
+    <td align="center"><strong>Recipe Detail</strong></td>
+    <td align="center"><strong>Profile</strong></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/images/register.png" alt="Register screen" width="220"></td>
+    <td><img src="./assets/images/discover.png" alt="Discover screen" width="220"></td>
+    <td><img src="./assets/images/pantry.png" alt="Pantry screen" width="220"></td>
+    <td><img src="./assets/images/receipt_detail.png" alt="Recipe detail screen" width="220"></td>
+    <td><img src="./assets/images/profile.png" alt="Profile screen" width="220"></td>
+  </tr>
+</table>
 
 ## Getting Started
 
@@ -30,11 +50,11 @@ Pantry Chef is a Flutter application designed to help users find recipes based o
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/pantry_chef.git
+   git clone https://github.com/soffffises/Ingredio.git
    ```
 2. Navigate to the project directory:
    ```sh
-   cd pantry_chef
+   cd Ingredio
    ```
 3. Install dependencies:
    ```sh
