@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ingredio/core/utils/app_routes.dart';
 import 'package:ingredio/core/utils/app_theme.dart';
 import 'package:ingredio/core/utils/validators.dart';
+import 'package:ingredio/presentation/providers/theme_mode_provider.dart';
 import 'package:ingredio/presentation/providers/user_profile_provider.dart';
+import 'package:ingredio/presentation/widgets/theme_mode_selector.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -38,43 +39,74 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: FaIcon(
-                      FontAwesomeIcons.utensils,
-                      color: Colors.white,
-                      size: 26,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  'Welcome to Ingredio',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Enter your name to continue.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                Row(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryContainer
+                                .withValues(alpha: 0.14),
+                            blurRadius: 24,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: Image.asset(
+                          'assets/images/logo.jpeg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome to Ingredio',
+                            style: Theme.of(context).textTheme.headlineLarge,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Choose how the app should look, then enter your name.',
+                            style:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
+                ThemeModeSelector(
+                  value: themeMode,
+                  onChanged: (mode) {
+                    ref.read(themeModeProvider.notifier).setThemeMode(mode);
+                  },
+                ),
+                const SizedBox(height: 28),
                 TextFormField(
                   controller: _nameController,
                   autofocus: true,
@@ -88,7 +120,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   onFieldSubmitted: (_) => _submit(),
                 ),
-                const Spacer(),
+                const SizedBox(height: 28),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

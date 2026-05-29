@@ -13,6 +13,7 @@ import 'package:ingredio/presentation/providers/favorites_provider.dart';
 import 'package:ingredio/presentation/providers/ingredients_provider.dart';
 import 'package:ingredio/presentation/providers/recipes_provider.dart';
 import 'package:ingredio/presentation/providers/user_profile_provider.dart';
+import 'package:ingredio/presentation/widgets/status_state_view.dart';
 
 class RecipesListScreen extends ConsumerStatefulWidget {
   const RecipesListScreen({super.key});
@@ -55,9 +56,10 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
       body: connectivityAsync.when(
         data: (isConnected) {
           if (!isConnected) {
-            return _StateMessage(
+            return StatusStateView(
               icon: FontAwesomeIcons.wifi,
               title: Constants.noInternetConnection,
+              message: 'Connect to the internet to load recipe suggestions.',
               actionLabel: Constants.retry,
               onAction: _refreshRecipes,
             );
@@ -98,7 +100,7 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => _StateMessage(
+            error: (error, stack) => StatusStateView(
               icon: FontAwesomeIcons.triangleExclamation,
               title: '${Constants.error} $error',
               actionLabel: Constants.retry,
@@ -107,9 +109,10 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _StateMessage(
+        error: (error, stack) => StatusStateView(
           icon: FontAwesomeIcons.triangleExclamation,
           title: '${Constants.networkError} $error',
+          message: 'Check your connection and try again.',
           actionLabel: Constants.retry,
           onAction: _refreshRecipes,
         ),
@@ -198,8 +201,8 @@ class _DiscoverContent extends StatelessWidget {
                 const SizedBox(height: 18),
                 Text(
                   greeting,
-                  style: const TextStyle(
-                    color: AppColors.onSurface,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 21,
                     height: 26 / 21,
                     fontWeight: FontWeight.w900,
@@ -210,7 +213,7 @@ class _DiscoverContent extends StatelessWidget {
                   'We found ${recipes.length} recipes you can make with items '
                   'in your pantry.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                         height: 17 / 12,
                       ),
@@ -310,7 +313,7 @@ class _TopBar extends StatelessWidget {
         Text(
           'Savor',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
         ),
@@ -347,17 +350,19 @@ class _SearchField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search recipes or ingredients',
           hintStyle: TextStyle(
-            color: AppColors.onSurfaceVariant.withValues(alpha: 0.78),
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant
+                .withValues(alpha: 0.78),
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
           prefixIcon: const Icon(
             FontAwesomeIcons.magnifyingGlass,
-            color: AppColors.onSurfaceVariant,
             size: 13,
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-          fillColor: AppColors.surface,
+          fillColor: Theme.of(context).colorScheme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: AppColors.outlineVariant),
@@ -585,7 +590,7 @@ class _StatCard extends StatelessWidget {
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -611,16 +616,16 @@ class _StatCard extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.onSurfaceVariant,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: AppColors.onSurface,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                   ),
@@ -651,8 +656,8 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: AppColors.onSurface,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 15,
             fontWeight: FontWeight.w800,
           ),
@@ -669,16 +674,16 @@ class _SectionHeader extends StatelessWidget {
                 children: [
                   Text(
                     actionLabel,
-                    style: const TextStyle(
-                      color: AppColors.onSurfaceVariant,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const FaIcon(
+                  FaIcon(
                     FontAwesomeIcons.arrowRight,
-                    color: AppColors.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 10,
                   ),
                 ],
@@ -1020,53 +1025,9 @@ class _EmptyRecipesState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _StateMessage(
+    return const StatusStateView(
       icon: FontAwesomeIcons.boxOpen,
       title: Constants.selectAtLeastOneIngredient,
-      actionLabel: '',
-      onAction: null,
-    );
-  }
-}
-
-class _StateMessage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String actionLabel;
-  final VoidCallback? onAction;
-
-  const _StateMessage({
-    required this.icon,
-    required this.title,
-    required this.actionLabel,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, color: AppColors.primaryContainer, size: 28),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            if (onAction != null) ...[
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: onAction,
-                child: Text(actionLabel),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

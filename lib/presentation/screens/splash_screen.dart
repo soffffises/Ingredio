@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ingredio/core/utils/app_routes.dart';
-import 'package:ingredio/core/utils/app_theme.dart';
 import 'package:ingredio/core/utils/constants.dart';
 import 'package:ingredio/presentation/providers/user_profile_provider.dart';
 
@@ -14,6 +13,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
+  static const Color _splashBackground = Color(0xFFFCF8F7);
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -46,25 +46,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _splashBackground,
       body: Center(
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 112,
-                height: 112,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.restaurant_menu,
-                  size: 56,
-                  color: Colors.white,
-                ),
+              Image.asset(
+                'assets/images/splash_screen.jpeg',
+                width: 220,
+                height: 220,
+                color: null,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 20),
               Text(
