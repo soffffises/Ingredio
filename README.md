@@ -24,12 +24,14 @@ Ingredio is a Flutter application designed to help users find recipes based on t
 
 <table>
   <tr>
+    <td align="center"><strong>Register</strong></td>
     <td align="center"><strong>Discover</strong></td>
     <td align="center"><strong>Pantry</strong></td>
     <td align="center"><strong>Recipe Detail</strong></td>
     <td align="center"><strong>Profile</strong></td>
   </tr>
   <tr>
+    <td><img src="./assets/images/register.png" alt="Register screen" width="220"></td>
     <td><img src="./assets/images/discover.png" alt="Discover screen" width="220"></td>
     <td><img src="./assets/images/pantry.png" alt="Pantry screen" width="220"></td>
     <td><img src="./assets/images/receipt_detail.png" alt="Recipe detail screen" width="220"></td>
