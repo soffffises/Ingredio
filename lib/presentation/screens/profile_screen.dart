@@ -1138,7 +1138,7 @@ class _ProfileHeader extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          name.isEmpty ? 'Profil' : name,
+          name.isEmpty ? 'Profile' : name,
           style: const TextStyle(
             color: AppColors.onSurface,
             fontSize: 18,
