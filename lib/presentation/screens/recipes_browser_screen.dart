@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ingredio/core/utils/app_theme.dart';
 import 'package:ingredio/presentation/providers/connectivity_provider.dart';
 import 'package:ingredio/presentation/providers/recipes_provider.dart';
 import 'package:ingredio/presentation/widgets/recipe_tile.dart';
+import 'package:ingredio/presentation/widgets/status_state_view.dart';
 
 class RecipesBrowserScreen extends ConsumerStatefulWidget {
   const RecipesBrowserScreen({super.key});
@@ -63,9 +64,10 @@ class _RecipesBrowserScreenState extends ConsumerState<RecipesBrowserScreen> {
       body: connectivityAsync.when(
         data: (isConnected) {
           if (!isConnected) {
-            return _StateMessage(
+            return StatusStateView(
               icon: FontAwesomeIcons.wifi,
               title: 'No internet connection',
+              message: 'Open the app again once you are back online.',
               actionLabel: 'Retry',
               onAction: _refresh,
             );
@@ -79,10 +81,9 @@ class _RecipesBrowserScreenState extends ConsumerState<RecipesBrowserScreen> {
               final hasMore = visibleCount < recipes.length;
 
               if (recipes.isEmpty) {
-                return const _StateMessage(
+                return const StatusStateView(
                   icon: FontAwesomeIcons.bowlFood,
                   title: 'No recipes found.',
-                  actionLabel: '',
                 );
               }
 
@@ -109,62 +110,22 @@ class _RecipesBrowserScreenState extends ConsumerState<RecipesBrowserScreen> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => _StateMessage(
+            error: (error, _) => StatusStateView(
               icon: FontAwesomeIcons.triangleExclamation,
               title: 'Error loading recipes: $error',
+              message: 'Pull to retry when the connection is available.',
               actionLabel: 'Retry',
               onAction: _refresh,
             ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => _StateMessage(
+        error: (error, _) => StatusStateView(
           icon: FontAwesomeIcons.triangleExclamation,
           title: 'Network error: $error',
+          message: 'Reconnect and try again.',
           actionLabel: 'Retry',
           onAction: _refresh,
-        ),
-      ),
-    );
-  }
-}
-
-class _StateMessage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String actionLabel;
-  final VoidCallback? onAction;
-
-  const _StateMessage({
-    required this.icon,
-    required this.title,
-    required this.actionLabel,
-    this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, color: AppColors.primaryContainer, size: 28),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            if (onAction != null) ...[
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: onAction,
-                child: Text(actionLabel),
-              ),
-            ],
-          ],
         ),
       ),
     );

@@ -53,9 +53,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _nextCollectionId = 5;
 
   void _showNameSheet(String currentName) {
-    final controller = TextEditingController(text: currentName);
-    String? errorText;
-
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -63,85 +60,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                MediaQuery.of(context).viewInsets.bottom + 28,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Profile name',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 14),
-                  TextField(
-                    controller: controller,
-                    autofocus: true,
-                    textInputAction: TextInputAction.done,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      errorText: errorText,
-                      prefixIcon: const Icon(Icons.person),
-                    ),
-                    onChanged: (_) {
-                      if (errorText != null) {
-                        setSheetState(() => errorText = null);
-                      }
-                    },
-                    onSubmitted: (_) async {
-                      await _saveNameFromSheet(
-                        controller.text,
-                        setSheetState,
-                        (value) => errorText = value,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 18),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await _saveNameFromSheet(
-                          controller.text,
-                          setSheetState,
-                          (value) => errorText = value,
-                        );
-                      },
-                      child: const Text('Save'),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+      builder: (sheetContext) {
+        return _NameSheetContent(
+          initialName: currentName,
+          onSave: (name) => ref.read(userProfileProvider.notifier).register(name),
         );
       },
-    ).whenComplete(controller.dispose);
-  }
-
-  Future<void> _saveNameFromSheet(
-    String value,
-    void Function(void Function()) setSheetState,
-    void Function(String?) setError,
-  ) async {
-    final name = value.trim();
-    if (name.isEmpty) {
-      setSheetState(() => setError('Name is required'));
-      return;
-    }
-
-    await ref.read(userProfileProvider.notifier).register(name);
-    if (!mounted) return;
-    Navigator.of(context).pop();
+    );
   }
 
   Future<void> _logout() async {
@@ -227,10 +152,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Dietary Preferences',
                     style: TextStyle(
-                      color: AppColors.onSurface,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
@@ -761,6 +686,98 @@ class _CollectionRecipesSheet extends StatelessWidget {
   }
 }
 
+class _NameSheetContent extends StatefulWidget {
+  final String initialName;
+  final Future<void> Function(String name) onSave;
+
+  const _NameSheetContent({
+    required this.initialName,
+    required this.onSave,
+  });
+
+  @override
+  State<_NameSheetContent> createState() => _NameSheetContentState();
+}
+
+class _NameSheetContentState extends State<_NameSheetContent> {
+  late final TextEditingController _controller;
+  String? _errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final name = _controller.text.trim();
+    if (name.isEmpty) {
+      setState(() => _errorText = 'Name is required');
+      return;
+    }
+
+    await widget.onSave(name);
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          MediaQuery.of(context).viewInsets.bottom + 28,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Profile name',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _controller,
+              autofocus: true,
+              textInputAction: TextInputAction.done,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                errorText: _errorText,
+                prefixIcon: const Icon(Icons.person),
+              ),
+              onChanged: (_) {
+                if (_errorText != null) {
+                  setState(() => _errorText = null);
+                }
+              },
+              onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submit,
+                child: const Text('Save'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _AddRecipeToCollectionSheet extends StatelessWidget {
   final String collectionTitle;
   final List<Recipe> recipes;
@@ -996,7 +1013,7 @@ class _TopBar extends StatelessWidget {
         Text(
           'Savor',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
         ),
@@ -1140,8 +1157,8 @@ class _ProfileHeader extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           name.isEmpty ? 'Profile' : name,
-          style: const TextStyle(
-            color: AppColors.onSurface,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 18,
             fontWeight: FontWeight.w900,
           ),
@@ -1150,7 +1167,7 @@ class _ProfileHeader extends StatelessWidget {
         Text(
           'Home cook • Pantry optimizer',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
         ),
@@ -1382,8 +1399,8 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: AppColors.onSurface,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 16,
             fontWeight: FontWeight.w900,
           ),

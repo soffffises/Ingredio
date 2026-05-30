@@ -9,6 +9,7 @@ import 'package:ingredio/presentation/providers/connectivity_provider.dart';
 import 'package:ingredio/presentation/providers/favorites_provider.dart';
 import 'package:ingredio/presentation/providers/hive_database_provider.dart';
 import 'package:ingredio/presentation/providers/recipe_detail_provider.dart';
+import 'package:ingredio/presentation/widgets/status_state_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -100,9 +101,10 @@ ${recipe.youtubeLink != null ? "${Constants.videoRecipe}: ${recipe.youtubeLink}"
       body: connectivityAsync.when(
         data: (isConnected) {
           if (!isConnected) {
-            return _StateMessage(
+            return StatusStateView(
               icon: FontAwesomeIcons.wifi,
               title: Constants.noInternetConnection,
+              message: 'Open a cached recipe or reconnect to refresh.',
               actionLabel: Constants.retry,
               onAction: () => _refreshRecipeDetails(ref),
             );
@@ -119,7 +121,7 @@ ${recipe.youtubeLink != null ? "${Constants.videoRecipe}: ${recipe.youtubeLink}"
                       : () => _launchYouTubeLink(context, recipe.youtubeLink!),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => _StateMessage(
+            error: (error, stack) => StatusStateView(
               icon: FontAwesomeIcons.triangleExclamation,
               title: '${Constants.error} $error',
               actionLabel: Constants.retry,
@@ -128,9 +130,10 @@ ${recipe.youtubeLink != null ? "${Constants.videoRecipe}: ${recipe.youtubeLink}"
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _StateMessage(
+        error: (error, stack) => StatusStateView(
           icon: FontAwesomeIcons.triangleExclamation,
           title: '${Constants.networkError} $error',
+          message: 'Reconnect and try again.',
           actionLabel: Constants.retry,
           onAction: () => _refreshRecipeDetails(ref),
         ),
@@ -782,45 +785,6 @@ class _StartCookingButton extends StatelessWidget {
   }
 }
 
-class _StateMessage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String actionLabel;
-  final VoidCallback onAction;
-
-  const _StateMessage({
-    required this.icon,
-    required this.title,
-    required this.actionLabel,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, color: AppColors.primaryContainer, size: 28),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onAction,
-              child: Text(actionLabel),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 List<String> _instructionSteps(String? instructions) {
   final value = instructions?.trim();

@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ingredio/core/utils/app_routes.dart';
 import 'package:ingredio/core/utils/app_theme.dart';
 import 'package:ingredio/core/utils/constants.dart';
 import 'package:ingredio/core/utils/ingredient_icons.dart';
+import 'package:ingredio/domain/entities/recipe.dart';
 import 'package:ingredio/presentation/providers/connectivity_provider.dart';
 import 'package:ingredio/presentation/providers/ingredient_quantities_provider.dart';
 import 'package:ingredio/presentation/providers/ingredients_list_provider.dart';
 import 'package:ingredio/presentation/providers/ingredients_provider.dart';
+import 'package:ingredio/presentation/providers/recipes_provider.dart';
+import 'package:ingredio/presentation/widgets/status_state_view.dart';
 
 class IngredientsScreen extends ConsumerStatefulWidget {
   const IngredientsScreen({super.key});
@@ -91,9 +95,10 @@ class _IngredientsScreenState extends ConsumerState<IngredientsScreen> {
       body: connectivityAsync.when(
         data: (isConnected) {
           if (!isConnected) {
-            return _StateMessage(
+            return StatusStateView(
               icon: FontAwesomeIcons.wifi,
               title: Constants.noInternetConnection,
+              message: 'You can still use cached pantry data if available.',
               actionLabel: Constants.retry,
               onAction: _refreshIngredients,
             );
@@ -129,7 +134,7 @@ class _IngredientsScreenState extends ConsumerState<IngredientsScreen> {
               ),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => _StateMessage(
+            error: (error, stack) => StatusStateView(
               icon: FontAwesomeIcons.triangleExclamation,
               title: '${Constants.loadingError} $error',
               actionLabel: Constants.retry,
@@ -138,9 +143,10 @@ class _IngredientsScreenState extends ConsumerState<IngredientsScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _StateMessage(
+        error: (error, stack) => StatusStateView(
           icon: FontAwesomeIcons.triangleExclamation,
           title: '${Constants.networkError} $error',
+          message: 'Check your internet connection and try again.',
           actionLabel: Constants.retry,
           onAction: _refreshIngredients,
         ),
@@ -199,7 +205,7 @@ class _PantryContent extends StatelessWidget {
                   'Add the ingredients you have on hand to discover '
                   'personalized recipes.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 13,
                         height: 19 / 13,
                       ),
@@ -288,7 +294,7 @@ class _TopBar extends StatelessWidget {
         Text(
           'Savor',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w800,
               ),
         ),
@@ -325,17 +331,19 @@ class _SearchField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search ingredients (e.g. Garlic, Kale)',
           hintStyle: TextStyle(
-            color: AppColors.onSurfaceVariant.withValues(alpha: 0.78),
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant
+                .withValues(alpha: 0.78),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
           prefixIcon: const Icon(
             FontAwesomeIcons.magnifyingGlass,
-            color: AppColors.onSurfaceVariant,
             size: 14,
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-          fillColor: AppColors.surface,
+          fillColor: Theme.of(context).colorScheme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: AppColors.outlineVariant),
@@ -528,8 +536,8 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label.toUpperCase(),
-      style: const TextStyle(
-        color: AppColors.onSurface,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 10,
         fontWeight: FontWeight.w800,
         letterSpacing: 0.8,
@@ -667,77 +675,207 @@ class _RoundIconButton extends StatelessWidget {
   }
 }
 
-class _SmartSuggestionsCard extends StatelessWidget {
+class _SmartSuggestionsCard extends ConsumerWidget {
   final int selectedCount;
 
   const _SmartSuggestionsCard({required this.selectedCount});
 
   @override
-  Widget build(BuildContext context) {
-    final hasEnoughIngredients = selectedCount > 0;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipesAsync = ref.watch(recipesProvider);
 
-    return Container(
-      constraints: const BoxConstraints(minHeight: 126),
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -10,
-            bottom: -16,
-            child: Icon(
-              FontAwesomeIcons.bowlFood,
-              size: 82,
-              color: Colors.white.withValues(alpha: 0.10),
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.recipes);
+      },
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 126),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppColors.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -10,
+              bottom: -16,
+              child: Icon(
+                FontAwesomeIcons.bowlFood,
+                size: 82,
+                color: Colors.white.withValues(alpha: 0.10),
+              ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Smart Suggestions',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                hasEnoughIngredients
-                    ? 'Based on your pantry, you are close to making '
-                        'fresh recipe ideas.'
-                    : 'Add a few ingredients to unlock personalized recipes.',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.78),
-                  fontSize: 12,
-                  height: 18 / 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: const Text(
-                  'See Recipes →',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
+            recipesAsync.when(
+              data: (recipes) {
+                final suggestions = _topSuggestions(recipes);
+                final readyCount = suggestions.length;
+                final summary = _summaryForSelection(
+                  selectedCount: selectedCount,
+                  readyCount: readyCount,
+                  totalRecipes: recipes.length,
+                );
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Smart Suggestions',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      summary,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.78),
+                        fontSize: 12,
+                        height: 18 / 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    if (suggestions.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: suggestions
+                            .map(
+                              (recipe) => _SuggestionChip(recipe: recipe),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: const Text(
+                        'See Recipes →',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              loading: () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Smart Suggestions',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Loading recipe ideas...',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      fontSize: 12,
+                      height: 18 / 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+              error: (error, stack) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Smart Suggestions',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Unable to load suggestions right now.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      fontSize: 12,
+                      height: 18 / 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Recipe> _topSuggestions(List<Recipe> recipes) {
+    if (selectedCount == 0) return const [];
+    final sorted = [...recipes]..sort((a, b) {
+        final diff = b.matchCount.compareTo(a.matchCount);
+        if (diff != 0) return diff;
+        return a.name.compareTo(b.name);
+      });
+    return sorted.take(3).toList();
+  }
+
+  String _summaryForSelection({
+    required int selectedCount,
+    required int readyCount,
+    required int totalRecipes,
+  }) {
+    if (selectedCount == 0) {
+      return 'Add pantry items to unlock personalized recipe ideas.';
+    }
+    if (totalRecipes == 0) {
+      return 'No matching recipes yet. Add a few more ingredients.';
+    }
+    if (readyCount == 0) {
+      return 'Your pantry is close, but no recipe is ready yet.';
+    }
+    return '$readyCount recipe${readyCount == 1 ? '' : 's'} ready from your pantry.';
+  }
+}
+
+class _SuggestionChip extends StatelessWidget {
+  final Recipe recipe;
+
+  const _SuggestionChip({required this.recipe});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        '${recipe.name} • ${recipe.matchCount} match${recipe.matchCount == 1 ? '' : 'es'}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -772,46 +910,6 @@ class _EmptyInlineMessage extends StatelessWidget {
         color: AppColors.onSurfaceVariant,
         fontSize: 12,
         fontWeight: FontWeight.w600,
-      ),
-    );
-  }
-}
-
-class _StateMessage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String actionLabel;
-  final VoidCallback onAction;
-
-  const _StateMessage({
-    required this.icon,
-    required this.title,
-    required this.actionLabel,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, color: AppColors.primaryContainer, size: 28),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onAction,
-              child: Text(actionLabel),
-            ),
-          ],
-        ),
       ),
     );
   }
