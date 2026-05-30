@@ -39,6 +39,8 @@ A Flutter application that helps users discover recipes based on the ingredients
 - **Recipe detail screen** — full instructions, ingredient list with measures, category, YouTube video link, and share button
 - **Favorites screen** — persist and manage favourite recipes offline
 - **Profile screen** — user registration (name), editable profile, recipe collections, dietary preferences, account management (logout / delete all data)
+- **Light / dark mode** — user-selectable theme with preference persisted to SharedPreferences
+- **Settings screen** — theme toggle and app preferences
 - **Offline support** — Hive local cache for recipes and ingredient lists; connectivity check with graceful error state and retry
 - **Share recipes** — share recipe name and details via the system share sheet
 
@@ -51,7 +53,26 @@ A Flutter application that helps users discover recipes based on the ingredients
 <img src="./assets/images/culinary_intelligence.png" alt="Culinary Intelligence design system" width="720">
 <img src="./assets/images/design_palette.png" alt="Design Palette" width="720">
 
-### App Screens
+### Light Mode
+
+<table>
+  <tr>
+    <td align="center"><strong>Register</strong></td>
+    <td align="center"><strong>Discover</strong></td>
+    <td align="center"><strong>Favorites</strong></td>
+    <td align="center"><strong>Profile</strong></td>
+    <td align="center"><strong>Settings</strong></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/images/screenshots/light/register.png" alt="Register — light" width="180"></td>
+    <td><img src="./assets/images/screenshots/light/discover.png" alt="Discover — light" width="180"></td>
+    <td><img src="./assets/images/screenshots/light/favorites.png" alt="Favorites — light" width="180"></td>
+    <td><img src="./assets/images/screenshots/light/profile.png" alt="Profile — light" width="180"></td>
+    <td><img src="./assets/images/screenshots/light/settings.png" alt="Settings — light" width="180"></td>
+  </tr>
+</table>
+
+### Dark Mode
 
 <table>
   <tr>
@@ -59,14 +80,18 @@ A Flutter application that helps users discover recipes based on the ingredients
     <td align="center"><strong>Discover</strong></td>
     <td align="center"><strong>Pantry</strong></td>
     <td align="center"><strong>Recipe Detail</strong></td>
+    <td align="center"><strong>Favorites</strong></td>
     <td align="center"><strong>Profile</strong></td>
+    <td align="center"><strong>Settings</strong></td>
   </tr>
   <tr>
-    <td><img src="./assets/images/register.png" alt="Register screen" width="220"></td>
-    <td><img src="./assets/images/discover.png" alt="Discover screen" width="220"></td>
-    <td><img src="./assets/images/pantry.png" alt="Pantry screen" width="220"></td>
-    <td><img src="./assets/images/receipt_detail.png" alt="Recipe detail screen" width="220"></td>
-    <td><img src="./assets/images/profile.png" alt="Profile screen" width="220"></td>
+    <td><img src="./assets/images/screenshots/dark/register.png" alt="Register — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/discover.png" alt="Discover — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/pantry.png" alt="Pantry — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/recipe_detail.png" alt="Recipe Detail — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/favorites.png" alt="Favorites — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/profile.png" alt="Profile — dark" width="155"></td>
+    <td><img src="./assets/images/screenshots/dark/settings.png" alt="Settings — dark" width="155"></td>
   </tr>
 </table>
 
@@ -339,6 +364,11 @@ Tabs:
 - Recently viewed recipes
 - Logout and delete all data actions (with confirmation dialog)
 
+### Settings screen (`SettingsScreen`)
+- Light / dark mode toggle
+- Theme preference persisted via SharedPreferences
+- Accessible from the Profile tab
+
 ---
 
 ## Packages
@@ -383,7 +413,7 @@ All UI and Raster frame times stay well below the 16 ms budget. No jank frames w
 | Jank frames (slow frames) | **0** |
 | Rendering engine | Impeller |
 
-<img src="./assets/images/frametime_chart.jpeg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
+<img src="./assets/images/frametime_chart.jpg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
 
 ---
 
@@ -402,7 +432,7 @@ Measured during a full user session with no memory leaks detected.
 
 RSS of ~211 MB is normal for a Flutter app with `cached_network_image` in use. The Dart heap remains stable at ~12–13 MB with no upward drift over time, indicating no memory leaks.
 
-<img src="./assets/images/memory_chart.jpeg" alt="Flutter memory chart — stable heap, no leaks" width="720">
+<img src="./assets/images/memory_chart.jpg" alt="Flutter memory chart — stable heap, no leaks" width="720">
 
 ---
 
