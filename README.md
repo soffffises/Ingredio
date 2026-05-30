@@ -383,8 +383,8 @@ All UI and Raster frame times stay well below the 16 ms budget. No jank frames w
 | Jank frames (slow frames) | **0** |
 | Rendering engine | Impeller |
 
-<img src="./assets/images/frame_chart.jpeg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
-s
+<img src="./assets/images/frametime_chart.jpeg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
+
 ---
 
 ### Memory Usage
