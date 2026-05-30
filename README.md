@@ -413,7 +413,7 @@ All UI and Raster frame times stay well below the 16 ms budget. No jank frames w
 | Jank frames (slow frames) | **0** |
 | Rendering engine | Impeller |
 
-<img src="./assets/images/frametime_chart.jpg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
+<img src="./assets/images/frametime_chart.jpeg" alt="Flutter frame timing — 59 FPS average, no jank" width="720">
 
 ---
 
@@ -432,7 +432,7 @@ Measured during a full user session with no memory leaks detected.
 
 RSS of ~211 MB is normal for a Flutter app with `cached_network_image` in use. The Dart heap remains stable at ~12–13 MB with no upward drift over time, indicating no memory leaks.
 
-<img src="./assets/images/memory_chart.jpg" alt="Flutter memory chart — stable heap, no leaks" width="720">
+<img src="./assets/images/memory_chart.jpeg" alt="Flutter memory chart — stable heap, no leaks" width="720">
 
 ---
 
